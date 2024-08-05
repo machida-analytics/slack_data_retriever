@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "slack-data-retriever"
+version = "0.1.0"
+description = ""
+authors = ["Ryohei Machida <r-machida@analytics-jp.com>"]
+readme = "README.md"
+packages = [{ include = "slack_data_retriever" }]
+
+[tool.poetry.scripts]
+main = "slack_data_retriever.main:main"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+slack-bolt = "^1.18.1"
+python-dotenv = "^1.0.1"
+requests = "^2.32.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
