@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Dict, List
 
 from slack_bolt import App
@@ -51,16 +52,17 @@ class SlackAPI:
 
         return all_results
 
-    def list_channels(self) -> List[Dict[str, Any]]:
+    def list_channels(
+        self, types: str = "public_channel,private_channel"
+    ) -> List[Dict[str, Any]]:
         """
         公開チャンネルと非公開チャンネルの一覧を取得
 
         Returns:
             List[Dict[str, Any]]: チャンネル情報のリスト
         """
-        return self._paginate_request(
-            "conversations.list", types="public_channel,private_channel"
-        )
+        logging.info("Fetching channel list.")
+        return self._paginate_request("conversations.list", types=types)
 
     def list_messages(self, channel_id: str) -> List[Dict[str, Any]]:
         """
@@ -72,6 +74,9 @@ class SlackAPI:
         Returns:
             List[Dict[str, Any]]: メッセージ情報のリスト
         """
+        logging.info(
+            f"Fetching messages in {channel_id}.", extra={"channel_id": channel_id}
+        )
         return self._paginate_request("conversations.history", channel=channel_id)[::-1]
 
     def list_thread_messages(
@@ -87,6 +92,20 @@ class SlackAPI:
         Returns:
             List[Dict[str, Any]]: スレッド内のメッセージ情報のリスト
         """
+        logging.info(
+            f"Fetching thread messages in {channel_id}.",
+            extra={"channel_id": channel_id, "thread_ts": thread_ts},
+        )
         return self._paginate_request(
             "conversations.replies", channel=channel_id, ts=thread_ts
         )[1:]
+
+    def team_info(self) -> Dict[str, Any]:
+        """
+        チーム情報を取得
+
+        Returns:
+            Dict[str, Any]: チーム情報
+        """
+        logging.info("Fetching team info.")
+        return self._paginate_request("team.info")
